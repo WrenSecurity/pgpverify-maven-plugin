@@ -47,7 +47,6 @@ public class PGPKeysServerClientIT {
             {"hkp://pool.sks-keyservers.net"},
             {"hkp://p80.pool.sks-keyservers.net:80"},
             {"http://p80.pool.sks-keyservers.net"},
-            {"hkps://pgp.mit.edu/"},
             {"hkps://hkps.pool.sks-keyservers.net"}
         };
     }
