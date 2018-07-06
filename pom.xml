@@ -27,7 +27,7 @@
 
     <groupId>org.simplify4u.plugins</groupId>
     <artifactId>pgpverify-maven-plugin</artifactId>
-    <version>1.3.0-wren2</version>
+    <version>1.3.0-wren3</version>
     <packaging>maven-plugin</packaging>
 
     <name>Verify PGP signatures plugin</name>
