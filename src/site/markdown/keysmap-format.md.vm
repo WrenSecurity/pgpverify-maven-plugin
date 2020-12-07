@@ -1,0 +1,117 @@
+KeysMap file format
+====================
+
+The format of the file is similar to, but more flexible than, a Java properties file.
+The syntax of each line of properties file is:
+
+    groupId:artifactId:packaging:version=pgpKeyFingerprint
+    
+Where
+
+- `groupId`           - groupId of maven artifact, this filed is required, but can be `*` for mach any   
+- `artifactId`        - artifactId of maven artifact
+- `packaging`         - packaging of maven artifact, eg. `pom`, `jar` 
+- `version`           - version of maven artifact, this filed support maven version range syntax
+- `pgpKeyFingerprint` - pgp key fingerprints in hex format which are allowed to sign artifact,
+                 can be supplied many keys separated by comma  
+
+PGP keys special values
+----------------------
+
+`pgpKey` field can contains many pgp fingerprints, separated by comma,
+each fingerprint must start with `0x`. There are allowed whitespace in hex fingerprint.
+
+`pgpKey` can also contains special values:
+
+- `*`, `any` - match any key for artifact
+- `noSig`    - allow artifact without signature
+- `badSig`   - allow artifact with invalid signature
+- `noKey`    - allow that key for artifact will not exist on public key servers
+
+The order of items and matching
+-------------------------------
+
+The order of items is not important, all matching items are checked for keys or special values.
+Process is continued until first matching item is found or end of items is reached.
+
+Comments 
+--------
+
+Everything from `#` (hash sign) and continue to the end of the line are comment and will be skipped.    
+
+Multiline
+---------
+
+If line is ending with ` \ ` (backslash) break of line will be removed and next line will be joined.
+
+There are allowed whitespace and comments after ` \ `.
+
+Examples
+--------
+
+match any artifact from group with any packaging and version 
+
+    test.groupId = 0x1234567890123456789012345678901234567890
+---
+
+match any artifact from group and any subgroups with any packaging and version 
+
+    test.groupId.* = 0x1234567890123456789012345678901234567890  
+---
+
+match a specific artifact with any packaging and version
+
+    test.groupId:artifactId = 0x1234567890123456789012345678901234567890  
+---
+
+match a specific artifact with packaging and with any version
+
+    test.groupId:artifactId:jar = 0x1234567890123456789012345678901234567890
+---
+
+match a specific artifact with packaging and version
+
+    test.groupId:artifactId:jar:1.0.0 = 0x1234567890123456789012345678901234567890
+---
+
+match a specific artifact with packaging and version range
+
+    test.groupId:artifactId:jar:[1.0.0,2.0.0) = 0x1234567890123456789012345678901234567890
+---
+
+match a specific artifact with the version and any packaging
+
+    test.groupId:artifactId:1.0.0 = 0x1234567890123456789012345678901234567890  
+---
+
+match a specific artifact with any version and packaging and many keys
+   
+    test.groupId:artifactId = 0x1234567890123456789012345678901234567890, 0x1234567890123456789012345678901234567890, \ 
+                              0x1234567890123456789012345678901234567890
+---
+
+allow bad signature for a specific artifact with version
+
+    test.groupId:artifactId           = 0x1234567890123456789012345678901234567890
+    test.groupId:artifactId:pom:1.0.0 = badSig
+---
+
+match specific artifact with any packaging and version and allow that signature will not exist
+
+    test.groupId:artifactId = 0x1234567890123456789012345678901234567890, noSig
+---
+
+comments
+   
+    # my comments
+    test.groupId:artifactId = \               # 
+                              0x1234567890123456789012345678901234567890, \ # first key 
+                              0x1234567890123456789012345678901234567890, \ # second key
+                              0x1234567890123456789012345678901234567890    # end 
+---
+
+External resources
+------------------
+ 
+- [Maven GAV - naming conventions](https://maven.apache.org/guides/mini/guide-naming-conventions.html)
+- [Version range syntax](https://maven.apache.org/enforcer/enforcer-rules/versionRanges.html)

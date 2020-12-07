@@ -15,27 +15,22 @@
  */
 package org.simplify4u.plugins;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.bouncycastle.openpgp.PGPPublicKey;
-
 import java.math.BigInteger;
+import java.util.Arrays;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import org.bouncycastle.openpgp.PGPPublicKey;
 
 /**
  * @author Slawomir Jaranowski.
  */
 public abstract class TestUtils {
 
-    static Artifact getArtifact(String groupId, String artifactId, String version) {
-        return new DefaultArtifact(groupId, artifactId, version, "", "", "", null);
-    }
+    public static PGPPublicKey getPGPgpPublicKey(long keyID) {
 
-    static PGPPublicKey getPGPgpPublicKey(long keyID) {
-
-        BigInteger bigInteger = BigInteger.valueOf(0xffff & keyID);
+        BigInteger bigInteger = BigInteger.valueOf(0xffffffffL & keyID);
         BigInteger bigInteger2 = BigInteger.valueOf(keyID);
 
         bigInteger = bigInteger.shiftLeft(64);
@@ -44,8 +39,15 @@ public abstract class TestUtils {
         bigInteger = bigInteger.shiftLeft(64);
         bigInteger = bigInteger.or(bigInteger2);
 
+        byte[] bytes = bigInteger.toByteArray();
+        if (bytes[0] == 0) {
+            // we can remove sign byte
+            bytes = Arrays.copyOfRange(bytes, 1, bytes.length);
+        }
+
         PGPPublicKey pgpKey = mock(PGPPublicKey.class);
-        when(pgpKey.getFingerprint()).thenReturn(bigInteger.toByteArray());
+        when(pgpKey.getFingerprint()).thenReturn(bytes);
+        when(pgpKey.isMasterKey()).thenReturn(true);
 
         return pgpKey;
     }

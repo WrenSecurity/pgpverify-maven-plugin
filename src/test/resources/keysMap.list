@@ -1,0 +1,41 @@
+#
+# Copyright 2017 Slawomir Jaranowski
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+junit    : junit        : 4.12    = 0x123456789ABCDef0, \
+    0x123456789ABCDeff  # next key in new line
+
+testlong : fingerprint            = 0x9ABC DEF0 1234 5678 9ABC DEF0 1234 5678 9ABC DEF0
+
+test.*                            = any
+
+test2:test-package                 = 0xA6ADFC93EF34893F
+test2                              = 0xA6ADFC93EF34893E
+
+# noSig test
+
+## empty key
+noSig:test                          =
+
+## with special value
+noSig:test2                         = noSig
+
+## with key
+noSig:test3                         = noSig, 0x123456789abcdef0
+
+# badSig
+badSig:test                         = badSig
+
+# noKey
+noKey:test                          = noKey
